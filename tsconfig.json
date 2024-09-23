@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ESNext", // or whichever version you prefer
+    "module": "ESNext",
+    "jsx": "react-jsx", // This enables JSX processing in .tsx files
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx"
+  ], // Make sure to include .tsx files
+  "exclude": [
+    "node_modules"
+  ]
+}
