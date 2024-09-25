@@ -13,8 +13,7 @@ export default withAuth(
     ],
         credentials: true,
       },
-      port: 7000,
-      host: '0.0.0.0',
+      port: process.env.PORT || 7000,
     },
     db: {
       provider: 'sqlite',
