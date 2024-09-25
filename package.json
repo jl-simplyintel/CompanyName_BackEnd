@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "keystone dev",
-    "start": "HOST=0.0.0.0 PORT=7000 keystone start",
+    "start": "keystone start --port $PORT",
     "build": "keystone build"
   },
   "dependencies": {
