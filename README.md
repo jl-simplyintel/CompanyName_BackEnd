@@ -1,6 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # backend
 =======
+=======
+>>>>>>> 3d9ba61 (Initial commit)
 # Keystone Project Starter
 
 Welcome to Keystone!
@@ -53,4 +56,7 @@ A walkthrough on how to do this is forthcoming, but in the meantime our [todo ex
 ### Embedding Keystone in a Next.js frontend
 
 While Keystone works as a standalone app, you can embed your Keystone app into a [Next.js](https://nextjs.org/) app. This is quite a different setup to the starter, and we recommend checking out our walkthrough for that [here](https://keystonejs.com/docs/walkthroughs/embedded-mode-with-sqlite-nextjs#how-to-embed-keystone-sq-lite-in-a-next-js-app).
+<<<<<<< HEAD
 >>>>>>> fd4d249 (Initial commit)
+=======
+>>>>>>> 3d9ba61 (Initial commit)
