@@ -1,19 +1,24 @@
 import { config } from '@keystone-6/core';
 import { lists } from './schema';
 import { withAuth, session } from './auth';
+import csurf from 'csurf';
 
 export default withAuth(
   config({
     server: {
       cors: {
         origin: [
-      'https://companynameadmin-008a72cce60a.herokuapp.com/', 
-      'https://company-name-cyan.vercel.app/', 
-      'https://company-name-git-main-sepis-projects.vercel.app/'
-    ],
+          'https://companynameadmin-008a72cce60a.herokuapp.com', 
+          'https://company-name-cyan.vercel.app', 
+          'https://company-name-git-main-sepis-projects.vercel.app'
+        ],
         credentials: true,
       },
-      port:  7000,
+      port: 7000,
+      extendExpressApp: (app) => {
+        // Add CSRF protection
+        app.use(csurf({ cookie: { secure: process.env.NODE_ENV === 'production' } }));
+      },
     },
     db: {
       provider: 'sqlite',
@@ -22,15 +27,11 @@ export default withAuth(
     lists,
     session,
     ui: {
-      // Allow access to the Admin UI only for users with an 'admin' role
-      isAccessAllowed: ({ session }) => {
-        return !!session && session.data.role === 'admin';
-      },
+      isAccessAllowed: ({ session }) => !!session && session.data.role === 'admin',
     },
     graphql: {
-      // Enable public access to specific mutations like authenticateUserWithPassword
       apolloConfig: {
-        introspection: true, // This allows GraphQL playground introspection
+        introspection: true,
       },
     },
     storage: {
