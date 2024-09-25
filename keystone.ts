@@ -8,8 +8,8 @@ export default withAuth(
       cors: {
         origin: [
       'https://lightyellow-reindeer-503269.hostingersite.com', 
-      'https://simply-intel-vjuz.vercel.app', 
-      'https://simply-intel-vjuz-git-main-sepis-projects.vercel.app'
+      'https://company-name-cyan.vercel.app/', 
+      'https://company-name-git-main-sepis-projects.vercel.app/'
     ],
         credentials: true,
       },
