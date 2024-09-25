@@ -6,15 +6,11 @@ export default withAuth(
   config({
     server: {
       cors: {
-<<<<<<< HEAD
-        origin: ['https://lightslategray-mink-295930.hostingersite.com', 'https://hotpink-eel-680709.hostingersite.com'],
-=======
         origin: [
       'https://lightyellow-reindeer-503269.hostingersite.com', 
       'https://simply-intel-vjuz.vercel.app', 
       'https://simply-intel-vjuz-git-main-sepis-projects.vercel.app'
     ],
->>>>>>> 3d9ba61 (Initial commit)
         credentials: true,
       },
       port: 7000,
