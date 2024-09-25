@@ -7,7 +7,7 @@ export default withAuth(
     server: {
       cors: {
         origin: [
-      'https://lightyellow-reindeer-503269.hostingersite.com', 
+      'https://companynameadmin-008a72cce60a.herokuapp.com/', 
       'https://company-name-cyan.vercel.app/', 
       'https://company-name-git-main-sepis-projects.vercel.app/'
     ],
