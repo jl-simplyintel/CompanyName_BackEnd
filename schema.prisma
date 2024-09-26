@@ -65,8 +65,6 @@ model Product {
   id          String             @id @default(cuid())
   name        String             @default("")
   description String             @default("")
-  price       Int
-  stock       Int
   images      Image[]            @relation("Image_product")
   business    Business?          @relation("Product_business", fields: [businessId], references: [id])
   businessId  String?            @map("business")

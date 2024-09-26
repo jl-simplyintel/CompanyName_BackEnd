@@ -443,9 +443,6 @@ type Product {
   id: ID!
   name: String
   description: String
-  price: Int
-  priceInDollars: Float
-  stock: Int
   images(where: ImageWhereInput! = {}, orderBy: [ImageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ImageWhereUniqueInput): [Image!]
   imagesCount(where: ImageWhereInput! = {}): Int
   business: Business
@@ -467,24 +464,11 @@ input ProductWhereInput {
   id: IDFilter
   name: StringFilter
   description: StringFilter
-  price: IntFilter
-  stock: IntFilter
   images: ImageManyRelationFilter
   business: BusinessWhereInput
   createdAt: DateTimeNullableFilter
   reviews: ProductReviewManyRelationFilter
   complaints: ProductComplaintManyRelationFilter
-}
-
-input IntFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: IntFilter
 }
 
 input ImageManyRelationFilter {
@@ -497,16 +481,12 @@ input ProductOrderByInput {
   id: OrderDirection
   name: OrderDirection
   description: OrderDirection
-  price: OrderDirection
-  stock: OrderDirection
   createdAt: OrderDirection
 }
 
 input ProductUpdateInput {
   name: String
   description: String
-  price: Int
-  stock: Int
   images: ImageRelateToManyForUpdateInput
   business: BusinessRelateToOneForUpdateInput
   createdAt: DateTime
@@ -535,8 +515,6 @@ input ProductUpdateArgs {
 input ProductCreateInput {
   name: String
   description: String
-  price: Int
-  stock: Int
   images: ImageRelateToManyForCreateInput
   business: BusinessRelateToOneForCreateInput
   createdAt: DateTime

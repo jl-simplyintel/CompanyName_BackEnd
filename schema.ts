@@ -120,19 +120,6 @@ export const lists = {
     fields: {
       name: text({ validation: { isRequired: true } }),
       description: text({ ui: { displayMode: 'textarea' } }),
-      price: integer({ validation: { isRequired: true }, label: 'Price (in cents)' }),
-      priceInDollars: virtual({
-        field: graphql.field({
-          type: graphql.Float,
-          resolve(item: any) {
-            return item.price / 100; // Convert cents to dollars
-          },
-        }),
-        ui: {
-          itemView: { fieldMode: 'read' }, // Read-only in the UI
-        },
-      }),
-      stock: integer({ validation: { isRequired: true }, label: 'Stock Available' }),
       images: relationship({
         ref: 'Image.product',
         many: true,
