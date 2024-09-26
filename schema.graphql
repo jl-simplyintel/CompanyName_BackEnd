@@ -9,10 +9,14 @@ type User {
   role: String
   reviews(where: ReviewWhereInput! = {}, orderBy: [ReviewOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ReviewWhereUniqueInput): [Review!]
   reviewsCount(where: ReviewWhereInput! = {}): Int
+  productReviews(where: ProductReviewWhereInput! = {}, orderBy: [ProductReviewOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductReviewWhereUniqueInput): [ProductReview!]
+  productReviewsCount(where: ProductReviewWhereInput! = {}): Int
   quotes(where: QuoteWhereInput! = {}, orderBy: [QuoteOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: QuoteWhereUniqueInput): [Quote!]
   quotesCount(where: QuoteWhereInput! = {}): Int
   complaints(where: ComplaintWhereInput! = {}, orderBy: [ComplaintOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ComplaintWhereUniqueInput): [Complaint!]
   complaintsCount(where: ComplaintWhereInput! = {}): Int
+  productComplaints(where: ProductComplaintWhereInput! = {}, orderBy: [ProductComplaintOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductComplaintWhereUniqueInput): [ProductComplaint!]
+  productComplaintsCount(where: ProductComplaintWhereInput! = {}): Int
   createdAt: DateTime
 }
 
@@ -36,8 +40,10 @@ input UserWhereInput {
   email: StringFilter
   role: StringNullableFilter
   reviews: ReviewManyRelationFilter
+  productReviews: ProductReviewManyRelationFilter
   quotes: QuoteManyRelationFilter
   complaints: ComplaintManyRelationFilter
+  productComplaints: ProductComplaintManyRelationFilter
   createdAt: DateTimeNullableFilter
 }
 
@@ -100,6 +106,12 @@ input ReviewManyRelationFilter {
   none: ReviewWhereInput
 }
 
+input ProductReviewManyRelationFilter {
+  every: ProductReviewWhereInput
+  some: ProductReviewWhereInput
+  none: ProductReviewWhereInput
+}
+
 input QuoteManyRelationFilter {
   every: QuoteWhereInput
   some: QuoteWhereInput
@@ -110,6 +122,12 @@ input ComplaintManyRelationFilter {
   every: ComplaintWhereInput
   some: ComplaintWhereInput
   none: ComplaintWhereInput
+}
+
+input ProductComplaintManyRelationFilter {
+  every: ProductComplaintWhereInput
+  some: ProductComplaintWhereInput
+  none: ProductComplaintWhereInput
 }
 
 input DateTimeNullableFilter {
@@ -142,8 +160,10 @@ input UserUpdateInput {
   password: String
   role: String
   reviews: ReviewRelateToManyForUpdateInput
+  productReviews: ProductReviewRelateToManyForUpdateInput
   quotes: QuoteRelateToManyForUpdateInput
   complaints: ComplaintRelateToManyForUpdateInput
+  productComplaints: ProductComplaintRelateToManyForUpdateInput
   createdAt: DateTime
 }
 
@@ -152,6 +172,13 @@ input ReviewRelateToManyForUpdateInput {
   set: [ReviewWhereUniqueInput!]
   create: [ReviewCreateInput!]
   connect: [ReviewWhereUniqueInput!]
+}
+
+input ProductReviewRelateToManyForUpdateInput {
+  disconnect: [ProductReviewWhereUniqueInput!]
+  set: [ProductReviewWhereUniqueInput!]
+  create: [ProductReviewCreateInput!]
+  connect: [ProductReviewWhereUniqueInput!]
 }
 
 input QuoteRelateToManyForUpdateInput {
@@ -168,6 +195,13 @@ input ComplaintRelateToManyForUpdateInput {
   connect: [ComplaintWhereUniqueInput!]
 }
 
+input ProductComplaintRelateToManyForUpdateInput {
+  disconnect: [ProductComplaintWhereUniqueInput!]
+  set: [ProductComplaintWhereUniqueInput!]
+  create: [ProductComplaintCreateInput!]
+  connect: [ProductComplaintWhereUniqueInput!]
+}
+
 input UserUpdateArgs {
   where: UserWhereUniqueInput!
   data: UserUpdateInput!
@@ -179,14 +213,21 @@ input UserCreateInput {
   password: String
   role: String
   reviews: ReviewRelateToManyForCreateInput
+  productReviews: ProductReviewRelateToManyForCreateInput
   quotes: QuoteRelateToManyForCreateInput
   complaints: ComplaintRelateToManyForCreateInput
+  productComplaints: ProductComplaintRelateToManyForCreateInput
   createdAt: DateTime
 }
 
 input ReviewRelateToManyForCreateInput {
   create: [ReviewCreateInput!]
   connect: [ReviewWhereUniqueInput!]
+}
+
+input ProductReviewRelateToManyForCreateInput {
+  create: [ProductReviewCreateInput!]
+  connect: [ProductReviewWhereUniqueInput!]
 }
 
 input QuoteRelateToManyForCreateInput {
@@ -197,6 +238,11 @@ input QuoteRelateToManyForCreateInput {
 input ComplaintRelateToManyForCreateInput {
   create: [ComplaintCreateInput!]
   connect: [ComplaintWhereUniqueInput!]
+}
+
+input ProductComplaintRelateToManyForCreateInput {
+  create: [ProductComplaintCreateInput!]
+  connect: [ProductComplaintWhereUniqueInput!]
 }
 
 type Business {
@@ -226,6 +272,8 @@ type Business {
   complaintsCount(where: ComplaintWhereInput! = {}): Int
   quotes(where: QuoteWhereInput! = {}, orderBy: [QuoteOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: QuoteWhereUniqueInput): [Quote!]
   quotesCount(where: QuoteWhereInput! = {}): Int
+  products(where: ProductWhereInput! = {}, orderBy: [ProductOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductWhereUniqueInput): [Product!]
+  productsCount(where: ProductWhereInput! = {}): Int
   createdAt: DateTime
   manager: User
 }
@@ -261,6 +309,7 @@ input BusinessWhereInput {
   reviews: ReviewManyRelationFilter
   complaints: ComplaintManyRelationFilter
   quotes: QuoteManyRelationFilter
+  products: ProductManyRelationFilter
   createdAt: DateTimeNullableFilter
   manager: UserWhereInput
 }
@@ -274,6 +323,12 @@ input IntNullableFilter {
   gt: Int
   gte: Int
   not: IntNullableFilter
+}
+
+input ProductManyRelationFilter {
+  every: ProductWhereInput
+  some: ProductWhereInput
+  none: ProductWhereInput
 }
 
 input BusinessOrderByInput {
@@ -323,8 +378,16 @@ input BusinessUpdateInput {
   reviews: ReviewRelateToManyForUpdateInput
   complaints: ComplaintRelateToManyForUpdateInput
   quotes: QuoteRelateToManyForUpdateInput
+  products: ProductRelateToManyForUpdateInput
   createdAt: DateTime
   manager: UserRelateToOneForUpdateInput
+}
+
+input ProductRelateToManyForUpdateInput {
+  disconnect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+  create: [ProductCreateInput!]
+  connect: [ProductWhereUniqueInput!]
 }
 
 input UserRelateToOneForUpdateInput {
@@ -361,13 +424,321 @@ input BusinessCreateInput {
   reviews: ReviewRelateToManyForCreateInput
   complaints: ComplaintRelateToManyForCreateInput
   quotes: QuoteRelateToManyForCreateInput
+  products: ProductRelateToManyForCreateInput
   createdAt: DateTime
   manager: UserRelateToOneForCreateInput
+}
+
+input ProductRelateToManyForCreateInput {
+  create: [ProductCreateInput!]
+  connect: [ProductWhereUniqueInput!]
 }
 
 input UserRelateToOneForCreateInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
+}
+
+type Product {
+  id: ID!
+  name: String
+  description: String
+  price: Int
+  priceInDollars: Float
+  stock: Int
+  images(where: ImageWhereInput! = {}, orderBy: [ImageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ImageWhereUniqueInput): [Image!]
+  imagesCount(where: ImageWhereInput! = {}): Int
+  business: Business
+  createdAt: DateTime
+  reviews(where: ProductReviewWhereInput! = {}, orderBy: [ProductReviewOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductReviewWhereUniqueInput): [ProductReview!]
+  reviewsCount(where: ProductReviewWhereInput! = {}): Int
+  complaints(where: ProductComplaintWhereInput! = {}, orderBy: [ProductComplaintOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductComplaintWhereUniqueInput): [ProductComplaint!]
+  complaintsCount(where: ProductComplaintWhereInput! = {}): Int
+}
+
+input ProductWhereUniqueInput {
+  id: ID
+}
+
+input ProductWhereInput {
+  AND: [ProductWhereInput!]
+  OR: [ProductWhereInput!]
+  NOT: [ProductWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  description: StringFilter
+  price: IntFilter
+  stock: IntFilter
+  images: ImageManyRelationFilter
+  business: BusinessWhereInput
+  createdAt: DateTimeNullableFilter
+  reviews: ProductReviewManyRelationFilter
+  complaints: ProductComplaintManyRelationFilter
+}
+
+input IntFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntFilter
+}
+
+input ImageManyRelationFilter {
+  every: ImageWhereInput
+  some: ImageWhereInput
+  none: ImageWhereInput
+}
+
+input ProductOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  description: OrderDirection
+  price: OrderDirection
+  stock: OrderDirection
+  createdAt: OrderDirection
+}
+
+input ProductUpdateInput {
+  name: String
+  description: String
+  price: Int
+  stock: Int
+  images: ImageRelateToManyForUpdateInput
+  business: BusinessRelateToOneForUpdateInput
+  createdAt: DateTime
+  reviews: ProductReviewRelateToManyForUpdateInput
+  complaints: ProductComplaintRelateToManyForUpdateInput
+}
+
+input ImageRelateToManyForUpdateInput {
+  disconnect: [ImageWhereUniqueInput!]
+  set: [ImageWhereUniqueInput!]
+  create: [ImageCreateInput!]
+  connect: [ImageWhereUniqueInput!]
+}
+
+input BusinessRelateToOneForUpdateInput {
+  create: BusinessCreateInput
+  connect: BusinessWhereUniqueInput
+  disconnect: Boolean
+}
+
+input ProductUpdateArgs {
+  where: ProductWhereUniqueInput!
+  data: ProductUpdateInput!
+}
+
+input ProductCreateInput {
+  name: String
+  description: String
+  price: Int
+  stock: Int
+  images: ImageRelateToManyForCreateInput
+  business: BusinessRelateToOneForCreateInput
+  createdAt: DateTime
+  reviews: ProductReviewRelateToManyForCreateInput
+  complaints: ProductComplaintRelateToManyForCreateInput
+}
+
+input ImageRelateToManyForCreateInput {
+  create: [ImageCreateInput!]
+  connect: [ImageWhereUniqueInput!]
+}
+
+input BusinessRelateToOneForCreateInput {
+  create: BusinessCreateInput
+  connect: BusinessWhereUniqueInput
+}
+
+type Image {
+  id: ID!
+  file: ImageFieldOutput
+  product: Product
+}
+
+type ImageFieldOutput {
+  id: ID!
+  filesize: Int!
+  width: Int!
+  height: Int!
+  extension: ImageExtension!
+  url: String!
+}
+
+enum ImageExtension {
+  jpg
+  png
+  webp
+  gif
+}
+
+input ImageWhereUniqueInput {
+  id: ID
+}
+
+input ImageWhereInput {
+  AND: [ImageWhereInput!]
+  OR: [ImageWhereInput!]
+  NOT: [ImageWhereInput!]
+  id: IDFilter
+  product: ProductWhereInput
+}
+
+input ImageOrderByInput {
+  id: OrderDirection
+}
+
+input ImageUpdateInput {
+  file: ImageFieldInput
+  product: ProductRelateToOneForUpdateInput
+}
+
+input ImageFieldInput {
+  upload: Upload!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input ProductRelateToOneForUpdateInput {
+  create: ProductCreateInput
+  connect: ProductWhereUniqueInput
+  disconnect: Boolean
+}
+
+input ImageUpdateArgs {
+  where: ImageWhereUniqueInput!
+  data: ImageUpdateInput!
+}
+
+input ImageCreateInput {
+  file: ImageFieldInput
+  product: ProductRelateToOneForCreateInput
+}
+
+input ProductRelateToOneForCreateInput {
+  create: ProductCreateInput
+  connect: ProductWhereUniqueInput
+}
+
+type ProductReview {
+  id: ID!
+  user: User
+  product: Product
+  rating: String
+  content: String
+  moderationStatus: String
+  createdAt: DateTime
+}
+
+input ProductReviewWhereUniqueInput {
+  id: ID
+}
+
+input ProductReviewWhereInput {
+  AND: [ProductReviewWhereInput!]
+  OR: [ProductReviewWhereInput!]
+  NOT: [ProductReviewWhereInput!]
+  id: IDFilter
+  user: UserWhereInput
+  product: ProductWhereInput
+  rating: StringNullableFilter
+  content: StringFilter
+  moderationStatus: StringNullableFilter
+  createdAt: DateTimeNullableFilter
+}
+
+input ProductReviewOrderByInput {
+  id: OrderDirection
+  rating: OrderDirection
+  content: OrderDirection
+  moderationStatus: OrderDirection
+  createdAt: OrderDirection
+}
+
+input ProductReviewUpdateInput {
+  user: UserRelateToOneForUpdateInput
+  product: ProductRelateToOneForUpdateInput
+  rating: String
+  content: String
+  moderationStatus: String
+  createdAt: DateTime
+}
+
+input ProductReviewUpdateArgs {
+  where: ProductReviewWhereUniqueInput!
+  data: ProductReviewUpdateInput!
+}
+
+input ProductReviewCreateInput {
+  user: UserRelateToOneForCreateInput
+  product: ProductRelateToOneForCreateInput
+  rating: String
+  content: String
+  moderationStatus: String
+  createdAt: DateTime
+}
+
+type ProductComplaint {
+  id: ID!
+  user: User
+  product: Product
+  subject: String
+  content: String
+  status: String
+  createdAt: DateTime
+}
+
+input ProductComplaintWhereUniqueInput {
+  id: ID
+}
+
+input ProductComplaintWhereInput {
+  AND: [ProductComplaintWhereInput!]
+  OR: [ProductComplaintWhereInput!]
+  NOT: [ProductComplaintWhereInput!]
+  id: IDFilter
+  user: UserWhereInput
+  product: ProductWhereInput
+  subject: StringFilter
+  content: StringFilter
+  status: StringNullableFilter
+  createdAt: DateTimeNullableFilter
+}
+
+input ProductComplaintOrderByInput {
+  id: OrderDirection
+  subject: OrderDirection
+  content: OrderDirection
+  status: OrderDirection
+  createdAt: OrderDirection
+}
+
+input ProductComplaintUpdateInput {
+  user: UserRelateToOneForUpdateInput
+  product: ProductRelateToOneForUpdateInput
+  subject: String
+  content: String
+  status: String
+  createdAt: DateTime
+}
+
+input ProductComplaintUpdateArgs {
+  where: ProductComplaintWhereUniqueInput!
+  data: ProductComplaintUpdateInput!
+}
+
+input ProductComplaintCreateInput {
+  user: UserRelateToOneForCreateInput
+  product: ProductRelateToOneForCreateInput
+  subject: String
+  content: String
+  status: String
+  createdAt: DateTime
 }
 
 type Complaint {
@@ -428,12 +799,6 @@ input ComplaintUpdateInput {
   replies: ComplaintReplyRelateToManyForUpdateInput
 }
 
-input BusinessRelateToOneForUpdateInput {
-  create: BusinessCreateInput
-  connect: BusinessWhereUniqueInput
-  disconnect: Boolean
-}
-
 input ComplaintReplyRelateToManyForUpdateInput {
   disconnect: [ComplaintReplyWhereUniqueInput!]
   set: [ComplaintReplyWhereUniqueInput!]
@@ -455,11 +820,6 @@ input ComplaintCreateInput {
   status: String
   createdAt: DateTime
   replies: ComplaintReplyRelateToManyForCreateInput
-}
-
-input BusinessRelateToOneForCreateInput {
-  create: BusinessCreateInput
-  connect: BusinessWhereUniqueInput
 }
 
 input ComplaintReplyRelateToManyForCreateInput {
@@ -560,9 +920,9 @@ type Quote {
   message: String
   business: Business
   status: String
+  createdAt: DateTime
   replies(where: QuoteReplyWhereInput! = {}, orderBy: [QuoteReplyOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: QuoteReplyWhereUniqueInput): [QuoteReply!]
   repliesCount(where: QuoteReplyWhereInput! = {}): Int
-  createdAt: DateTime
 }
 
 input QuoteWhereUniqueInput {
@@ -579,8 +939,8 @@ input QuoteWhereInput {
   message: StringFilter
   business: BusinessWhereInput
   status: StringNullableFilter
-  replies: QuoteReplyManyRelationFilter
   createdAt: DateTimeNullableFilter
+  replies: QuoteReplyManyRelationFilter
 }
 
 input QuoteReplyManyRelationFilter {
@@ -603,8 +963,8 @@ input QuoteUpdateInput {
   message: String
   business: BusinessRelateToOneForUpdateInput
   status: String
-  replies: QuoteReplyRelateToManyForUpdateInput
   createdAt: DateTime
+  replies: QuoteReplyRelateToManyForUpdateInput
 }
 
 input QuoteReplyRelateToManyForUpdateInput {
@@ -625,8 +985,8 @@ input QuoteCreateInput {
   message: String
   business: BusinessRelateToOneForCreateInput
   status: String
-  replies: QuoteReplyRelateToManyForCreateInput
   createdAt: DateTime
+  replies: QuoteReplyRelateToManyForCreateInput
 }
 
 input QuoteReplyRelateToManyForCreateInput {
@@ -829,6 +1189,30 @@ type Mutation {
   updateBusinesses(data: [BusinessUpdateArgs!]!): [Business]
   deleteBusiness(where: BusinessWhereUniqueInput!): Business
   deleteBusinesses(where: [BusinessWhereUniqueInput!]!): [Business]
+  createProduct(data: ProductCreateInput!): Product
+  createProducts(data: [ProductCreateInput!]!): [Product]
+  updateProduct(where: ProductWhereUniqueInput!, data: ProductUpdateInput!): Product
+  updateProducts(data: [ProductUpdateArgs!]!): [Product]
+  deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteProducts(where: [ProductWhereUniqueInput!]!): [Product]
+  createImage(data: ImageCreateInput!): Image
+  createImages(data: [ImageCreateInput!]!): [Image]
+  updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
+  updateImages(data: [ImageUpdateArgs!]!): [Image]
+  deleteImage(where: ImageWhereUniqueInput!): Image
+  deleteImages(where: [ImageWhereUniqueInput!]!): [Image]
+  createProductReview(data: ProductReviewCreateInput!): ProductReview
+  createProductReviews(data: [ProductReviewCreateInput!]!): [ProductReview]
+  updateProductReview(where: ProductReviewWhereUniqueInput!, data: ProductReviewUpdateInput!): ProductReview
+  updateProductReviews(data: [ProductReviewUpdateArgs!]!): [ProductReview]
+  deleteProductReview(where: ProductReviewWhereUniqueInput!): ProductReview
+  deleteProductReviews(where: [ProductReviewWhereUniqueInput!]!): [ProductReview]
+  createProductComplaint(data: ProductComplaintCreateInput!): ProductComplaint
+  createProductComplaints(data: [ProductComplaintCreateInput!]!): [ProductComplaint]
+  updateProductComplaint(where: ProductComplaintWhereUniqueInput!, data: ProductComplaintUpdateInput!): ProductComplaint
+  updateProductComplaints(data: [ProductComplaintUpdateArgs!]!): [ProductComplaint]
+  deleteProductComplaint(where: ProductComplaintWhereUniqueInput!): ProductComplaint
+  deleteProductComplaints(where: [ProductComplaintWhereUniqueInput!]!): [ProductComplaint]
   createComplaint(data: ComplaintCreateInput!): Complaint
   createComplaints(data: [ComplaintCreateInput!]!): [Complaint]
   updateComplaint(where: ComplaintWhereUniqueInput!, data: ComplaintUpdateInput!): Complaint
@@ -895,6 +1279,18 @@ type Query {
   business(where: BusinessWhereUniqueInput!): Business
   businesses(where: BusinessWhereInput! = {}, orderBy: [BusinessOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: BusinessWhereUniqueInput): [Business!]
   businessesCount(where: BusinessWhereInput! = {}): Int
+  product(where: ProductWhereUniqueInput!): Product
+  products(where: ProductWhereInput! = {}, orderBy: [ProductOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductWhereUniqueInput): [Product!]
+  productsCount(where: ProductWhereInput! = {}): Int
+  image(where: ImageWhereUniqueInput!): Image
+  images(where: ImageWhereInput! = {}, orderBy: [ImageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ImageWhereUniqueInput): [Image!]
+  imagesCount(where: ImageWhereInput! = {}): Int
+  productReview(where: ProductReviewWhereUniqueInput!): ProductReview
+  productReviews(where: ProductReviewWhereInput! = {}, orderBy: [ProductReviewOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductReviewWhereUniqueInput): [ProductReview!]
+  productReviewsCount(where: ProductReviewWhereInput! = {}): Int
+  productComplaint(where: ProductComplaintWhereUniqueInput!): ProductComplaint
+  productComplaints(where: ProductComplaintWhereInput! = {}, orderBy: [ProductComplaintOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductComplaintWhereUniqueInput): [ProductComplaint!]
+  productComplaintsCount(where: ProductComplaintWhereInput! = {}): Int
   complaint(where: ComplaintWhereUniqueInput!): Complaint
   complaints(where: ComplaintWhereInput! = {}, orderBy: [ComplaintOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ComplaintWhereUniqueInput): [Complaint!]
   complaintsCount(where: ComplaintWhereInput! = {}): Int

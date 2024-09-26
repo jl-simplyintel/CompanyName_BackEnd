@@ -12,16 +12,18 @@ generator client {
 }
 
 model User {
-  id                    String      @id @default(cuid())
-  name                  String      @default("")
-  email                 String      @unique @default("")
+  id                    String             @id @default(cuid())
+  name                  String             @default("")
+  email                 String             @unique @default("")
   password              String
-  role                  String?     @default("guest")
-  reviews               Review[]    @relation("Review_user")
-  quotes                Quote[]     @relation("Quote_user")
-  complaints            Complaint[] @relation("Complaint_user")
-  createdAt             DateTime?   @default(now())
-  from_Business_manager Business[]  @relation("Business_manager")
+  role                  String?            @default("guest")
+  reviews               Review[]           @relation("Review_user")
+  productReviews        ProductReview[]    @relation("ProductReview_user")
+  quotes                Quote[]            @relation("Quote_user")
+  complaints            Complaint[]        @relation("Complaint_user")
+  productComplaints     ProductComplaint[] @relation("ProductComplaint_user")
+  createdAt             DateTime?          @default(now())
+  from_Business_manager Business[]         @relation("Business_manager")
 }
 
 model Business {
@@ -48,6 +50,7 @@ model Business {
   reviews                      Review[]         @relation("Review_business")
   complaints                   Complaint[]      @relation("Complaint_business")
   quotes                       Quote[]          @relation("Quote_business")
+  products                     Product[]        @relation("Product_business")
   createdAt                    DateTime?        @default(now())
   manager                      User?            @relation("Business_manager", fields: [managerId], references: [id])
   managerId                    String?          @map("manager")
@@ -56,6 +59,65 @@ model Business {
   from_QuoteReply_business     QuoteReply[]     @relation("QuoteReply_business")
 
   @@index([managerId])
+}
+
+model Product {
+  id          String             @id @default(cuid())
+  name        String             @default("")
+  description String             @default("")
+  price       Int
+  stock       Int
+  images      Image[]            @relation("Image_product")
+  business    Business?          @relation("Product_business", fields: [businessId], references: [id])
+  businessId  String?            @map("business")
+  createdAt   DateTime?          @default(now())
+  reviews     ProductReview[]    @relation("ProductReview_product")
+  complaints  ProductComplaint[] @relation("ProductComplaint_product")
+
+  @@index([businessId])
+}
+
+model Image {
+  id             String   @id @default(cuid())
+  file_id        String?
+  file_filesize  Int?
+  file_width     Int?
+  file_height    Int?
+  file_extension String?
+  product        Product? @relation("Image_product", fields: [productId], references: [id])
+  productId      String?  @map("product")
+
+  @@index([productId])
+}
+
+model ProductReview {
+  id               String    @id @default(cuid())
+  user             User?     @relation("ProductReview_user", fields: [userId], references: [id])
+  userId           String?   @map("user")
+  product          Product?  @relation("ProductReview_product", fields: [productId], references: [id])
+  productId        String?   @map("product")
+  rating           String?   @default("5")
+  content          String    @default("")
+  moderationStatus String?   @default("2")
+  createdAt        DateTime? @default(now())
+
+  @@index([userId])
+  @@index([productId])
+}
+
+model ProductComplaint {
+  id        String    @id @default(cuid())
+  user      User?     @relation("ProductComplaint_user", fields: [userId], references: [id])
+  userId    String?   @map("user")
+  product   Product?  @relation("ProductComplaint_product", fields: [productId], references: [id])
+  productId String?   @map("product")
+  subject   String    @default("")
+  content   String    @default("")
+  status    String?   @default("1")
+  createdAt DateTime? @default(now())
+
+  @@index([userId])
+  @@index([productId])
 }
 
 model Complaint {
@@ -101,8 +163,8 @@ model Quote {
   business   Business?    @relation("Quote_business", fields: [businessId], references: [id])
   businessId String?      @map("business")
   status     String?      @default("pending")
-  replies    QuoteReply[] @relation("QuoteReply_quote")
   createdAt  DateTime?    @default(now())
+  replies    QuoteReply[] @relation("QuoteReply_quote")
 
   @@index([userId])
   @@index([businessId])

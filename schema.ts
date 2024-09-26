@@ -1,6 +1,8 @@
-import { list } from '@keystone-6/core';
-import { text, relationship, password, timestamp, select, integer, virtual } from '@keystone-6/core/fields';
+import { graphql, list } from '@keystone-6/core';
+import { text, relationship, password, timestamp, select, integer, virtual, image } from '@keystone-6/core/fields';
 import { allowAll } from '@keystone-6/core/access';
+import { BaseAccessArgs, AccessOperation } from '@keystone-6/core/dist/declarations/src/types/config/access-control';
+import { BaseListTypeInfo, MaybePromise } from '@keystone-6/core/types';
 
 
 export const lists = {
@@ -34,13 +36,15 @@ export const lists = {
         defaultValue: 'guest',
       }),
       reviews: relationship({ ref: 'Review.user', many: true }),
+      productReviews: relationship({ ref: 'ProductReview.user', many: true }),
       quotes: relationship({ ref: 'Quote.user', many: true }),
       complaints: relationship({ ref: 'Complaint.user', many: true }),
+      productComplaints: relationship({ ref: 'ProductComplaint.user', many: true }),
       createdAt: timestamp({
         defaultValue: { kind: 'now' },
         ui: {
-          createView: { fieldMode: 'hidden' }, // Hidden during user creation
-          itemView: { fieldMode: 'read' }, // Read-only field for admins
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
         },
       }),
     },
@@ -85,6 +89,7 @@ export const lists = {
       reviews: relationship({ ref: 'Review.business', many: true }),
       complaints: relationship({ ref: 'Complaint.business', many: true }),
       quotes: relationship({ ref: 'Quote.business', many: true }),
+      products: relationship({ ref: 'Product.business', many: true }),
       createdAt: timestamp({
         defaultValue: { kind: 'now' },
         ui: { createView: { fieldMode: 'hidden' }, itemView: { fieldMode: 'read' } },
@@ -109,6 +114,128 @@ export const lists = {
       },
     },
   }),
+
+  Product: list({
+    access: allowAll,
+    fields: {
+      name: text({ validation: { isRequired: true } }),
+      description: text({ ui: { displayMode: 'textarea' } }),
+      price: integer({ validation: { isRequired: true }, label: 'Price (in cents)' }),
+      priceInDollars: virtual({
+        field: graphql.field({
+          type: graphql.Float,
+          resolve(item: any) {
+            return item.price / 100; // Convert cents to dollars
+          },
+        }),
+        ui: {
+          itemView: { fieldMode: 'read' }, // Read-only in the UI
+        },
+      }),
+      stock: integer({ validation: { isRequired: true }, label: 'Stock Available' }),
+      images: relationship({
+        ref: 'Image.product',
+        many: true,
+        ui: {
+          displayMode: 'cards',
+          cardFields: ['file'],
+          inlineCreate: { fields: ['file'] },
+          inlineEdit: { fields: ['file'] }
+        }
+      }),
+      business: relationship({
+        ref: 'Business.products',
+        ui: { displayMode: 'select' },
+      }),
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: { createView: { fieldMode: 'hidden' }, itemView: { fieldMode: 'read' } },
+      }),
+      reviews: relationship({ ref: 'ProductReview.product', many: true }),
+      complaints: relationship({ ref: 'ProductComplaint.product', many: true }),
+    },
+    ui: {
+      listView: {
+        initialColumns: ['name', 'priceInDollars', 'stock', 'business'],
+        initialSort: { field: 'name', direction: 'ASC' },
+      },
+    },
+  }),
+  
+  Image: list({
+    fields: {
+      file: image({ storage: 'local_images' }),
+      product: relationship({ ref: 'Product.images' }), // Link back to Product
+    },
+    access: allowAll,
+  }),  
+
+  ProductReview: list({
+    access: allowAll,
+    fields: {
+      user: relationship({ ref: 'User.productReviews' }), // Correct relationship to User
+      product: relationship({ ref: 'Product.reviews' }), // Link to Product
+      rating: select({
+        options: [
+          { label: '1', value: '1' },
+          { label: '2', value: '2' },
+          { label: '3', value: '3' },
+          { label: '4', value: '4' },
+          { label: '5', value: '5' },
+        ],
+        defaultValue: '5',
+      }),
+      content: text({ ui: { displayMode: 'textarea' }, label: 'Review Content' }),
+      moderationStatus: select({
+        options: [
+          { label: 'Approved', value: '0' },
+          { label: 'Denied', value: '1' },
+          { label: 'Pending Approval', value: '2' },
+        ],
+        defaultValue: '2',
+        ui: { displayMode: 'segmented-control' },
+      }),
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: { createView: { fieldMode: 'hidden' }, itemView: { fieldMode: 'read' } },
+      }),
+    },
+    ui: {
+      listView: {
+        initialColumns: ['user', 'product', 'rating', 'moderationStatus', 'createdAt'],
+        initialSort: { field: 'createdAt', direction: 'DESC' },
+      },
+    },
+  }),
+
+  ProductComplaint: list({
+    access: allowAll,
+    fields: {
+      user: relationship({ ref: 'User.productComplaints' }), // Link to User
+      product: relationship({ ref: 'Product.complaints' }), // Link to Product
+      subject: text({ validation: { isRequired: true } }),
+      content: text({ ui: { displayMode: 'textarea' }, label: 'Complaint Content' }),
+      status: select({
+        options: [
+          { label: 'Closed', value: '0' },
+          { label: 'Pending', value: '1' },
+        ],
+        defaultValue: '1',
+        ui: { displayMode: 'segmented-control', itemView: { fieldMode: 'edit' } },
+      }),
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: { createView: { fieldMode: 'hidden' }, itemView: { fieldMode: 'read' } },
+      }),
+    },
+    ui: {
+      listView: {
+        initialColumns: ['user', 'product', 'status', 'createdAt'],
+        initialSort: { field: 'createdAt', direction: 'DESC' },
+      },
+    },
+  }),
+
 
   // Complaint List
   Complaint: list({
@@ -423,6 +550,7 @@ export const lists = {
       },
     },
   }),
+
 
 };
 export default {
