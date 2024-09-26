@@ -1,5 +1,5 @@
 import { list } from '@keystone-6/core';
-import { text, relationship, password, timestamp, select, integer, virtual  } from '@keystone-6/core/fields';
+import { text, relationship, password, timestamp, select, integer, virtual } from '@keystone-6/core/fields';
 import { allowAll } from '@keystone-6/core/access';
 
 
@@ -20,7 +20,12 @@ export const lists = {
         validation: { isRequired: true },
         isIndexed: 'unique',
       }),
-      password: password({ validation: { isRequired: true } }),
+      password: password({
+        validation: { isRequired: true },
+        ui: {
+          itemView: { fieldMode: 'hidden' }, // Admin cannot view or edit the password directly
+        },
+      }),
       role: select({
         options: [
           { label: 'Admin', value: 'admin' },
@@ -33,7 +38,10 @@ export const lists = {
       complaints: relationship({ ref: 'Complaint.user', many: true }),
       createdAt: timestamp({
         defaultValue: { kind: 'now' },
-        ui: { createView: { fieldMode: 'hidden' }, itemView: { fieldMode: 'read' } },
+        ui: {
+          createView: { fieldMode: 'hidden' }, // Hidden during user creation
+          itemView: { fieldMode: 'read' }, // Read-only field for admins
+        },
       }),
     },
     ui: {
@@ -114,26 +122,44 @@ export const lists = {
     },
     fields: {
       user: relationship({ ref: 'User.complaints', ui: { itemView: { fieldMode: 'read' } } }),
+
       isAnonymous: select({
         options: [
           { label: 'Yes', value: 'true' },
           { label: 'No', value: 'false' },
         ],
         defaultValue: 'false',
-        ui: { displayMode: 'segmented-control' },
+        ui: { displayMode: 'segmented-control', itemView: { fieldMode: 'read' } }, // Read-only
       }),
-      subject: text({ validation: { isRequired: true } }),
-      content: text({ ui: { displayMode: 'textarea' }, label: 'Complaint Content' }),
-      business: relationship({ ref: 'Business.complaints' }),
+
+      subject: text({
+        validation: { isRequired: true },
+        ui: { itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
+      content: text({
+        ui: { displayMode: 'textarea', itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
+      business: relationship({
+        ref: 'Business.complaints',
+        ui: { itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
       status: select({
         options: [
           { label: 'Closed', value: '0' },
           { label: 'Pending', value: '1' },
         ],
         defaultValue: '1',
-        ui: { displayMode: 'segmented-control', itemView: { fieldMode: 'edit' } },
+        ui: { displayMode: 'segmented-control', itemView: { fieldMode: 'edit' } }, // Editable
       }),
-      createdAt: timestamp({ defaultValue: { kind: 'now' } }),
+
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: { itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
       replies: relationship({ ref: 'ComplaintReply.complaint', many: true }),
     },
     ui: {
@@ -156,14 +182,16 @@ export const lists = {
     },
     fields: {
       user: relationship({ ref: 'User.reviews', ui: { itemView: { fieldMode: 'read' } } }),
+
       isAnonymous: select({
         options: [
           { label: 'Yes', value: 'true' },
           { label: 'No', value: 'false' },
         ],
         defaultValue: 'false',
-        ui: { displayMode: 'segmented-control' },
+        ui: { displayMode: 'segmented-control', itemView: { fieldMode: 'read' } }, // Read-only
       }),
+
       rating: select({
         options: [
           { label: '1', value: '1' },
@@ -173,9 +201,18 @@ export const lists = {
           { label: '5', value: '5' },
         ],
         defaultValue: '5',
+        ui: { itemView: { fieldMode: 'read' } }, // Read-only
       }),
-      content: text({ ui: { displayMode: 'textarea' }, label: 'Review Content' }),
-      business: relationship({ ref: 'Business.reviews' }),
+
+      content: text({
+        ui: { displayMode: 'textarea', itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
+      business: relationship({
+        ref: 'Business.reviews',
+        ui: { itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
       moderationStatus: select({
         options: [
           { label: 'Approved', value: '0' },
@@ -183,9 +220,14 @@ export const lists = {
           { label: 'Pending Approval', value: '2' },
         ],
         defaultValue: '2',
-        ui: { displayMode: 'segmented-control' },
+        ui: { displayMode: 'segmented-control', itemView: { fieldMode: 'edit' } }, // Editable by admin
       }),
-      createdAt: timestamp({ defaultValue: { kind: 'now' } }),
+
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: { itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
       replies: relationship({ ref: 'ReviewReply.review', many: true }),
     },
     ui: {
@@ -208,19 +250,35 @@ export const lists = {
     },
     fields: {
       user: relationship({ ref: 'User.quotes', ui: { itemView: { fieldMode: 'read' } } }),
-      service: text({ ui: { itemView: { fieldMode: 'read' } } }),
-      message: text({ ui: { displayMode: 'textarea', itemView: { fieldMode: 'read' } } }),
-      business: relationship({ ref: 'Business.quotes' }),
+
+      service: text({
+        ui: { itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
+      message: text({
+        ui: { displayMode: 'textarea', itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
+      business: relationship({
+        ref: 'Business.quotes',
+        ui: { itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
       status: select({
         options: [
           { label: 'Pending', value: 'pending' },
           { label: 'Replied', value: 'replied' },
         ],
         defaultValue: 'pending',
-        ui: { displayMode: 'segmented-control', itemView: { fieldMode: 'edit' } },
+        ui: { displayMode: 'segmented-control', itemView: { fieldMode: 'edit' } }, // Editable by admin
       }),
+
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: { itemView: { fieldMode: 'read' } }, // Read-only
+      }),
+
       replies: relationship({ ref: 'QuoteReply.quote', many: true }),
-      createdAt: timestamp({ defaultValue: { kind: 'now' } }),
     },
     ui: {
       listView: {
