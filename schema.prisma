@@ -51,6 +51,7 @@ model Business {
   complaints                   Complaint[]      @relation("Complaint_business")
   quotes                       Quote[]          @relation("Quote_business")
   products                     Product[]        @relation("Product_business")
+  jobListings                  JobListing[]     @relation("JobListing_business")
   createdAt                    DateTime?        @default(now())
   manager                      User?            @relation("Business_manager", fields: [managerId], references: [id])
   managerId                    String?          @map("manager")
@@ -204,5 +205,19 @@ model QuoteReply {
   createdAt  DateTime? @default(now())
 
   @@index([quoteId])
+  @@index([businessId])
+}
+
+model JobListing {
+  id          String    @id @default(cuid())
+  business    Business? @relation("JobListing_business", fields: [businessId], references: [id])
+  businessId  String?   @map("business")
+  title       String    @default("")
+  description String    @default("")
+  salary      Int?
+  location    String    @default("")
+  createdAt   DateTime?
+  updatedAt   DateTime?
+
   @@index([businessId])
 }

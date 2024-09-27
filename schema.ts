@@ -90,6 +90,7 @@ export const lists = {
       complaints: relationship({ ref: 'Complaint.business', many: true }),
       quotes: relationship({ ref: 'Quote.business', many: true }),
       products: relationship({ ref: 'Product.business', many: true }),
+      jobListings: relationship({ ref: 'JobListing.business', many: true }),
       createdAt: timestamp({
         defaultValue: { kind: 'now' },
         ui: { createView: { fieldMode: 'hidden' }, itemView: { fieldMode: 'read' } },
@@ -148,14 +149,14 @@ export const lists = {
       },
     },
   }),
-  
+
   Image: list({
     fields: {
       file: image({ storage: 'local_images' }),
       product: relationship({ ref: 'Product.images' }), // Link back to Product
     },
     access: allowAll,
-  }),  
+  }),
 
   ProductReview: list({
     access: allowAll,
@@ -222,7 +223,6 @@ export const lists = {
       },
     },
   }),
-
 
   // Complaint List
   Complaint: list({
@@ -538,7 +538,33 @@ export const lists = {
     },
   }),
 
-
+  JobListing: list({
+    access: allowAll,
+    fields: {
+      business: relationship({ ref: 'Business.jobListings', many: false }),
+      title: text({ validation: { isRequired: true } }),
+      description: text({ ui: { displayMode: 'textarea' } }),
+      salary: integer({ validation: { min: 0 } }),
+      location: text({ validation: { isRequired: true } }),
+      createdAt: timestamp({
+        ui: { itemView: { fieldMode: 'read' } }, // Remove defaultValue
+      }),
+      updatedAt: timestamp({
+        ui: { itemView: { fieldMode: 'read' } }, // Remove defaultValue
+      }),
+    },
+    hooks: {
+      resolveInput: ({ resolvedData, operation }) => {
+        if (operation === 'create') {
+          resolvedData.createdAt = new Date(); // Set the current time for 'createdAt'
+        }
+        if (operation === 'update') {
+          resolvedData.updatedAt = new Date(); // Update 'updatedAt' field on update
+        }
+        return resolvedData;
+      },
+    },
+  })
 };
 export default {
   lists

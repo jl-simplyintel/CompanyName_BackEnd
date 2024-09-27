@@ -274,6 +274,8 @@ type Business {
   quotesCount(where: QuoteWhereInput! = {}): Int
   products(where: ProductWhereInput! = {}, orderBy: [ProductOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductWhereUniqueInput): [Product!]
   productsCount(where: ProductWhereInput! = {}): Int
+  jobListings(where: JobListingWhereInput! = {}, orderBy: [JobListingOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: JobListingWhereUniqueInput): [JobListing!]
+  jobListingsCount(where: JobListingWhereInput! = {}): Int
   createdAt: DateTime
   manager: User
 }
@@ -310,6 +312,7 @@ input BusinessWhereInput {
   complaints: ComplaintManyRelationFilter
   quotes: QuoteManyRelationFilter
   products: ProductManyRelationFilter
+  jobListings: JobListingManyRelationFilter
   createdAt: DateTimeNullableFilter
   manager: UserWhereInput
 }
@@ -329,6 +332,12 @@ input ProductManyRelationFilter {
   every: ProductWhereInput
   some: ProductWhereInput
   none: ProductWhereInput
+}
+
+input JobListingManyRelationFilter {
+  every: JobListingWhereInput
+  some: JobListingWhereInput
+  none: JobListingWhereInput
 }
 
 input BusinessOrderByInput {
@@ -379,6 +388,7 @@ input BusinessUpdateInput {
   complaints: ComplaintRelateToManyForUpdateInput
   quotes: QuoteRelateToManyForUpdateInput
   products: ProductRelateToManyForUpdateInput
+  jobListings: JobListingRelateToManyForUpdateInput
   createdAt: DateTime
   manager: UserRelateToOneForUpdateInput
 }
@@ -388,6 +398,13 @@ input ProductRelateToManyForUpdateInput {
   set: [ProductWhereUniqueInput!]
   create: [ProductCreateInput!]
   connect: [ProductWhereUniqueInput!]
+}
+
+input JobListingRelateToManyForUpdateInput {
+  disconnect: [JobListingWhereUniqueInput!]
+  set: [JobListingWhereUniqueInput!]
+  create: [JobListingCreateInput!]
+  connect: [JobListingWhereUniqueInput!]
 }
 
 input UserRelateToOneForUpdateInput {
@@ -425,6 +442,7 @@ input BusinessCreateInput {
   complaints: ComplaintRelateToManyForCreateInput
   quotes: QuoteRelateToManyForCreateInput
   products: ProductRelateToManyForCreateInput
+  jobListings: JobListingRelateToManyForCreateInput
   createdAt: DateTime
   manager: UserRelateToOneForCreateInput
 }
@@ -432,6 +450,11 @@ input BusinessCreateInput {
 input ProductRelateToManyForCreateInput {
   create: [ProductCreateInput!]
   connect: [ProductWhereUniqueInput!]
+}
+
+input JobListingRelateToManyForCreateInput {
+  create: [JobListingCreateInput!]
+  connect: [JobListingWhereUniqueInput!]
 }
 
 input UserRelateToOneForCreateInput {
@@ -1149,6 +1172,70 @@ input QuoteRelateToOneForCreateInput {
   connect: QuoteWhereUniqueInput
 }
 
+type JobListing {
+  id: ID!
+  business: Business
+  title: String
+  description: String
+  salary: Int
+  location: String
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input JobListingWhereUniqueInput {
+  id: ID
+}
+
+input JobListingWhereInput {
+  AND: [JobListingWhereInput!]
+  OR: [JobListingWhereInput!]
+  NOT: [JobListingWhereInput!]
+  id: IDFilter
+  business: BusinessWhereInput
+  title: StringFilter
+  description: StringFilter
+  salary: IntNullableFilter
+  location: StringFilter
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input JobListingOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+  description: OrderDirection
+  salary: OrderDirection
+  location: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input JobListingUpdateInput {
+  business: BusinessRelateToOneForUpdateInput
+  title: String
+  description: String
+  salary: Int
+  location: String
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input JobListingUpdateArgs {
+  where: JobListingWhereUniqueInput!
+  data: JobListingUpdateInput!
+}
+
+input JobListingCreateInput {
+  business: BusinessRelateToOneForCreateInput
+  title: String
+  description: String
+  salary: Int
+  location: String
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -1227,6 +1314,12 @@ type Mutation {
   updateQuoteReplies(data: [QuoteReplyUpdateArgs!]!): [QuoteReply]
   deleteQuoteReply(where: QuoteReplyWhereUniqueInput!): QuoteReply
   deleteQuoteReplies(where: [QuoteReplyWhereUniqueInput!]!): [QuoteReply]
+  createJobListing(data: JobListingCreateInput!): JobListing
+  createJobListings(data: [JobListingCreateInput!]!): [JobListing]
+  updateJobListing(where: JobListingWhereUniqueInput!, data: JobListingUpdateInput!): JobListing
+  updateJobListings(data: [JobListingUpdateArgs!]!): [JobListing]
+  deleteJobListing(where: JobListingWhereUniqueInput!): JobListing
+  deleteJobListings(where: [JobListingWhereUniqueInput!]!): [JobListing]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -1287,6 +1380,9 @@ type Query {
   quoteReply(where: QuoteReplyWhereUniqueInput!): QuoteReply
   quoteReplies(where: QuoteReplyWhereInput! = {}, orderBy: [QuoteReplyOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: QuoteReplyWhereUniqueInput): [QuoteReply!]
   quoteRepliesCount(where: QuoteReplyWhereInput! = {}): Int
+  jobListing(where: JobListingWhereUniqueInput!): JobListing
+  jobListings(where: JobListingWhereInput! = {}, orderBy: [JobListingOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: JobListingWhereUniqueInput): [JobListing!]
+  jobListingsCount(where: JobListingWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
