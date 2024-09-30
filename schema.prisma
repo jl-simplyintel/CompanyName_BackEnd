@@ -12,18 +12,18 @@ generator client {
 }
 
 model User {
-  id                    String             @id @default(cuid())
-  name                  String             @default("")
-  email                 String             @unique @default("")
-  password              String
-  role                  String?            @default("guest")
-  reviews               Review[]           @relation("Review_user")
-  productReviews        ProductReview[]    @relation("ProductReview_user")
-  quotes                Quote[]            @relation("Quote_user")
-  complaints            Complaint[]        @relation("Complaint_user")
-  productComplaints     ProductComplaint[] @relation("ProductComplaint_user")
-  createdAt             DateTime?          @default(now())
-  from_Business_manager Business[]         @relation("Business_manager")
+  id                String             @id @default(cuid())
+  name              String             @default("")
+  email             String             @unique @default("")
+  password          String
+  role              String?            @default("guest")
+  businesses        Business[]         @relation("Business_manager")
+  reviews           Review[]           @relation("Review_user")
+  productReviews    ProductReview[]    @relation("ProductReview_user")
+  quotes            Quote[]            @relation("Quote_user")
+  complaints        Complaint[]        @relation("Complaint_user")
+  productComplaints ProductComplaint[] @relation("ProductComplaint_user")
+  createdAt         DateTime?          @default(now())
 }
 
 model Business {

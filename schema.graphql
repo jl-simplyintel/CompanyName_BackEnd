@@ -7,6 +7,8 @@ type User {
   email: String
   password: PasswordState
   role: String
+  businesses(where: BusinessWhereInput! = {}, orderBy: [BusinessOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: BusinessWhereUniqueInput): [Business!]
+  businessesCount(where: BusinessWhereInput! = {}): Int
   reviews(where: ReviewWhereInput! = {}, orderBy: [ReviewOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ReviewWhereUniqueInput): [Review!]
   reviewsCount(where: ReviewWhereInput! = {}): Int
   productReviews(where: ProductReviewWhereInput! = {}, orderBy: [ProductReviewOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductReviewWhereUniqueInput): [ProductReview!]
@@ -39,6 +41,7 @@ input UserWhereInput {
   name: StringFilter
   email: StringFilter
   role: StringNullableFilter
+  businesses: BusinessManyRelationFilter
   reviews: ReviewManyRelationFilter
   productReviews: ProductReviewManyRelationFilter
   quotes: QuoteManyRelationFilter
@@ -100,6 +103,12 @@ input StringNullableFilter {
   not: StringNullableFilter
 }
 
+input BusinessManyRelationFilter {
+  every: BusinessWhereInput
+  some: BusinessWhereInput
+  none: BusinessWhereInput
+}
+
 input ReviewManyRelationFilter {
   every: ReviewWhereInput
   some: ReviewWhereInput
@@ -159,12 +168,20 @@ input UserUpdateInput {
   email: String
   password: String
   role: String
+  businesses: BusinessRelateToManyForUpdateInput
   reviews: ReviewRelateToManyForUpdateInput
   productReviews: ProductReviewRelateToManyForUpdateInput
   quotes: QuoteRelateToManyForUpdateInput
   complaints: ComplaintRelateToManyForUpdateInput
   productComplaints: ProductComplaintRelateToManyForUpdateInput
   createdAt: DateTime
+}
+
+input BusinessRelateToManyForUpdateInput {
+  disconnect: [BusinessWhereUniqueInput!]
+  set: [BusinessWhereUniqueInput!]
+  create: [BusinessCreateInput!]
+  connect: [BusinessWhereUniqueInput!]
 }
 
 input ReviewRelateToManyForUpdateInput {
@@ -212,12 +229,18 @@ input UserCreateInput {
   email: String
   password: String
   role: String
+  businesses: BusinessRelateToManyForCreateInput
   reviews: ReviewRelateToManyForCreateInput
   productReviews: ProductReviewRelateToManyForCreateInput
   quotes: QuoteRelateToManyForCreateInput
   complaints: ComplaintRelateToManyForCreateInput
   productComplaints: ProductComplaintRelateToManyForCreateInput
   createdAt: DateTime
+}
+
+input BusinessRelateToManyForCreateInput {
+  create: [BusinessCreateInput!]
+  connect: [BusinessWhereUniqueInput!]
 }
 
 input ReviewRelateToManyForCreateInput {

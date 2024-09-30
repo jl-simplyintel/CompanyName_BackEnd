@@ -1,19 +1,12 @@
 import { list } from '@keystone-6/core';
-import { text, relationship, password, timestamp, select, integer, virtual, image } from '@keystone-6/core/fields';
+import { text, relationship, password, timestamp, select, integer, virtual, image, checkbox } from '@keystone-6/core/fields';
 import { allowAll } from '@keystone-6/core/access';
 import { document } from '@keystone-6/fields-document';
 
 export const lists = {
-  // User List (Unchanged)
+  // User List
   User: list({
-    access: {
-      operation: {
-        query: allowAll,
-        create: allowAll,
-        update: allowAll,
-        delete: allowAll,
-      },
-    },
+    access: allowAll, // Allow access to all operations without restriction
     fields: {
       name: text({ validation: { isRequired: true } }),
       email: text({
@@ -29,9 +22,21 @@ export const lists = {
       role: select({
         options: [
           { label: 'Admin', value: 'admin' },
+          { label: 'Manager', value: 'manager' },
           { label: 'Guest', value: 'guest' },
         ],
-        defaultValue: 'guest',
+        defaultValue: 'guest', // Default to guest if no role is assigned
+      }),
+      businesses: relationship({
+        ref: 'Business.manager',
+        many: true,
+        ui: {
+          displayMode: 'cards',
+          cardFields: ['name', 'contactEmail'],
+          inlineCreate: { fields: ['name', 'contactEmail'] },
+          inlineEdit: { fields: ['name', 'contactEmail'] },
+          inlineConnect: true,  // Enable connecting to existing businesses
+        },
       }),
       reviews: relationship({ ref: 'Review.user', many: true }),
       productReviews: relationship({ ref: 'ProductReview.user', many: true }),
@@ -48,23 +53,21 @@ export const lists = {
     },
     ui: {
       listView: {
-        initialColumns: ['name', 'email', 'role', 'createdAt'],
+        initialColumns: ['name', 'email', 'role', 'createdAt'], // Show role instead of individual boolean fields
       },
     },
   }),
+  
 
-  // Business List (Simplified)
+  // Business List
   Business: list({
     access: allowAll,
     fields: {
       name: text({ validation: { isRequired: true } }),
       description: document({
-        formatting: true, // Enables bold, italic, underline, etc.
-        links: true,      // Enables hyperlink functionality
-        layouts: [
-          [1, 1],         // Supports multiple column layouts
-          [1, 1, 1],
-        ],
+        formatting: true,
+        links: true,
+        layouts: [[1, 1], [1, 1, 1]],
       }),
       industry: text(),
       contactEmail: text({ validation: { isRequired: true } }),
@@ -100,15 +103,18 @@ export const lists = {
         defaultValue: { kind: 'now' },
         ui: { createView: { fieldMode: 'hidden' }, itemView: { fieldMode: 'read' } },
       }),
+      // Relationship: A business can be managed by multiple managers
       manager: relationship({
-        ref: 'User',
+        ref: 'User.businesses',
         ui: {
           displayMode: 'cards',
           cardFields: ['name', 'email'],
           inlineCreate: { fields: ['name', 'email'] },
           inlineEdit: { fields: ['name', 'email'] },
+          inlineConnect: true,  // Enable connecting to existing users
         },
       }),
+
     },
     db: {
       idField: { kind: 'uuid' },
@@ -163,11 +169,11 @@ export const lists = {
   }),
 
   Image: list({
+    access: allowAll,
     fields: {
       file: image({ storage: 'local_images' }),
       product: relationship({ ref: 'Product.images' }), // Link back to Product
     },
-    access: allowAll,
   }),
 
   ProductReview: list({
@@ -238,14 +244,7 @@ export const lists = {
 
   // Complaint List
   Complaint: list({
-    access: {
-      operation: {
-        query: allowAll,
-        create: allowAll,
-        update: ({ session }) => !!session && session.data.role === 'admin',
-        delete: ({ session }) => !!session && session.data.role === 'admin',
-      },
-    },
+    access: allowAll,
     fields: {
       user: relationship({ ref: 'User.complaints', ui: { itemView: { fieldMode: 'read' } } }),
 
@@ -298,14 +297,7 @@ export const lists = {
 
   // Review List
   Review: list({
-    access: {
-      operation: {
-        query: allowAll,
-        create: allowAll,
-        update: ({ session }) => !!session && session.data.role === 'admin',
-        delete: ({ session }) => !!session && session.data.role === 'admin',
-      },
-    },
+    access: allowAll,
     fields: {
       user: relationship({ ref: 'User.reviews', ui: { itemView: { fieldMode: 'read' } } }),
 
@@ -366,14 +358,7 @@ export const lists = {
 
   // Quote List
   Quote: list({
-    access: {
-      operation: {
-        query: allowAll,
-        create: allowAll,
-        update: ({ session }) => !!session && session.data.role === 'admin',
-        delete: ({ session }) => !!session && session.data.role === 'admin',
-      },
-    },
+    access: allowAll,
     fields: {
       user: relationship({ ref: 'User.quotes', ui: { itemView: { fieldMode: 'read' } } }),
 
