@@ -248,7 +248,7 @@ input ProductComplaintRelateToManyForCreateInput {
 type Business {
   id: ID!
   name: String
-  description: String
+  description: Business_description_Document
   industry: String
   contactEmail: String
   contactPhone: String
@@ -280,6 +280,10 @@ type Business {
   manager: User
 }
 
+type Business_description_Document {
+  document(hydrateRelationships: Boolean! = false): JSON!
+}
+
 input BusinessWhereUniqueInput {
   id: ID
 }
@@ -290,7 +294,6 @@ input BusinessWhereInput {
   NOT: [BusinessWhereInput!]
   id: IDFilter
   name: StringFilter
-  description: StringFilter
   industry: StringFilter
   contactEmail: StringFilter
   contactPhone: StringFilter
@@ -343,7 +346,6 @@ input JobListingManyRelationFilter {
 input BusinessOrderByInput {
   id: OrderDirection
   name: OrderDirection
-  description: OrderDirection
   industry: OrderDirection
   contactEmail: OrderDirection
   contactPhone: OrderDirection
@@ -366,7 +368,7 @@ input BusinessOrderByInput {
 
 input BusinessUpdateInput {
   name: String
-  description: String
+  description: JSON
   industry: String
   contactEmail: String
   contactPhone: String
@@ -420,7 +422,7 @@ input BusinessUpdateArgs {
 
 input BusinessCreateInput {
   name: String
-  description: String
+  description: JSON
   industry: String
   contactEmail: String
   contactPhone: String
@@ -465,7 +467,7 @@ input UserRelateToOneForCreateInput {
 type Product {
   id: ID!
   name: String
-  description: String
+  description: Product_description_Document
   images(where: ImageWhereInput! = {}, orderBy: [ImageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ImageWhereUniqueInput): [Image!]
   imagesCount(where: ImageWhereInput! = {}): Int
   business: Business
@@ -474,6 +476,10 @@ type Product {
   reviewsCount(where: ProductReviewWhereInput! = {}): Int
   complaints(where: ProductComplaintWhereInput! = {}, orderBy: [ProductComplaintOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductComplaintWhereUniqueInput): [ProductComplaint!]
   complaintsCount(where: ProductComplaintWhereInput! = {}): Int
+}
+
+type Product_description_Document {
+  document(hydrateRelationships: Boolean! = false): JSON!
 }
 
 input ProductWhereUniqueInput {
@@ -486,7 +492,6 @@ input ProductWhereInput {
   NOT: [ProductWhereInput!]
   id: IDFilter
   name: StringFilter
-  description: StringFilter
   images: ImageManyRelationFilter
   business: BusinessWhereInput
   createdAt: DateTimeNullableFilter
@@ -503,13 +508,12 @@ input ImageManyRelationFilter {
 input ProductOrderByInput {
   id: OrderDirection
   name: OrderDirection
-  description: OrderDirection
   createdAt: OrderDirection
 }
 
 input ProductUpdateInput {
   name: String
-  description: String
+  description: JSON
   images: ImageRelateToManyForUpdateInput
   business: BusinessRelateToOneForUpdateInput
   createdAt: DateTime
@@ -537,7 +541,7 @@ input ProductUpdateArgs {
 
 input ProductCreateInput {
   name: String
-  description: String
+  description: JSON
   images: ImageRelateToManyForCreateInput
   business: BusinessRelateToOneForCreateInput
   createdAt: DateTime

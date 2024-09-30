@@ -1,9 +1,7 @@
-import { graphql, list } from '@keystone-6/core';
+import { list } from '@keystone-6/core';
 import { text, relationship, password, timestamp, select, integer, virtual, image } from '@keystone-6/core/fields';
 import { allowAll } from '@keystone-6/core/access';
-import { BaseAccessArgs, AccessOperation } from '@keystone-6/core/dist/declarations/src/types/config/access-control';
-import { BaseListTypeInfo, MaybePromise } from '@keystone-6/core/types';
-
+import { document } from '@keystone-6/fields-document';
 
 export const lists = {
   // User List (Unchanged)
@@ -60,7 +58,14 @@ export const lists = {
     access: allowAll,
     fields: {
       name: text({ validation: { isRequired: true } }),
-      description: text({ ui: { displayMode: 'textarea' } }),
+      description: document({
+        formatting: true, // Enables bold, italic, underline, etc.
+        links: true,      // Enables hyperlink functionality
+        layouts: [
+          [1, 1],         // Supports multiple column layouts
+          [1, 1, 1],
+        ],
+      }),
       industry: text(),
       contactEmail: text({ validation: { isRequired: true } }),
       contactPhone: text(),
@@ -120,7 +125,14 @@ export const lists = {
     access: allowAll,
     fields: {
       name: text({ validation: { isRequired: true } }),
-      description: text({ ui: { displayMode: 'textarea' } }),
+      description: document({
+        formatting: true, // Enables bold, italic, underline, etc.
+        links: true,      // Enables hyperlink functionality
+        layouts: [
+          [1, 1],         // Supports multiple column layouts
+          [1, 1, 1],
+        ],
+      }),
       images: relationship({
         ref: 'Image.product',
         many: true,
