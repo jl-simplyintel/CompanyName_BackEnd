@@ -36,6 +36,7 @@ export const lists = {
         },
       },
     },
+    
     fields: {
       name: text({ validation: { isRequired: true } }),
       email: text({
