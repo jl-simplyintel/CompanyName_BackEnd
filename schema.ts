@@ -9,35 +9,23 @@ export const lists = {
     access: {
       operation: {
         query: ({ session }) => !!session || true, // Allow any logged-in user to query
-        create: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'guest', // Admins and guests can create
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create users
         delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete users
         update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager' || session?.data.role === 'guest', // Admins, managers, and guests can update
       },
       filter: {
-        query: ({ session }) => {
-          if (session?.data.role === 'admin') {
-            return {}; // Admins can query all users
-          } else if (session?.data.role === 'manager') {
-            return { users: { id: { equals: session.data.businessId } } }; // Managers can only query their assigned business and related entities
-          } else if (session?.data.role === 'guest') {
-            return {}; // Guests can query
-          } else {
-            return {}; // Public can query
-          }
-        },
-        update: ({ session }) => {
-          if (session?.data.role === 'admin') {
-            return {}; // Admins can update all users
-          } else if (session?.data.role === 'manager') {
-            return { users: { id: { equals: session.data.businessId } } }; // Managers can only update their assigned business and related entities
-          } else if (session?.data.role === 'guest') {
-            return {}; // Guests can update
-          } else {
-            return false; // Public cannot update
-          }
-        },
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all users
+            : { id: { equals: session.itemId } }, // Managers and guests can only query their own user data
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all users
+            : { id: { equals: session.itemId } }, // Managers and guests can only update their own user data
       },
     },
+
     fields: {
       name: text({ validation: { isRequired: true } }),
       email: text({
