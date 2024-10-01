@@ -19,8 +19,7 @@ const { withAuth } = createAuth({
   listKey: 'User',
   identityField: 'email',
   secretField: 'password',
-  // Include role in sessionData instead of boolean fields
-  sessionData: 'id name role createdAt',
+  sessionData: 'id name role createdAt', // Include role in sessionData instead of boolean fields
   initFirstItem: {
     fields: ['name', 'email', 'password', 'role'], // First user can set their role
   },
@@ -30,7 +29,7 @@ const { withAuth } = createAuth({
 const session = statelessSessions({
   maxAge: sessionMaxAge,
   secret: sessionSecret,
-  secure: false, // Set to 'true' if using HTTPS in production
+  secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
   sameSite: 'lax', // Ensure cookies are sent with the right requests
   path: '/', // Make sure the cookie is available throughout the app
 });
