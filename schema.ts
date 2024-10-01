@@ -8,10 +8,10 @@ export const lists = {
   User: list({
     access: {
       operation: {
-        query: ({ session }) => !!session || true, // Allow any logged-in user to query
-        create: ({ session }) => session?.data.role === 'admin', // Only admins can create users
+        query: allowAll, // Allow any logged-in user to query
+        create: allowAll, // Only admins can create users
         delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete users
-        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager' || session?.data.role === 'guest', // Admins, managers, and guests can update
+        update: allowAll, // Admins, managers, and guests can update
       },
       filter: {
         query: ({ session }) =>
