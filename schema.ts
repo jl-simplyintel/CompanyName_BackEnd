@@ -82,7 +82,7 @@ export const lists = {
   Business: list({
     access: {
       operation: {
-        query: ({ session }) => !!session || true, // Allow any logged-in user to query
+        query: allowAll, // Allow any logged-in user to query
         create: ({ session }) => session?.data.role === 'admin', // Only admins can create
         update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
         delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
