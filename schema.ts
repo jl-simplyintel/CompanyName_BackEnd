@@ -11,7 +11,7 @@ export const lists = {
         query: ({ session }) => !!session || true, // Allow any logged-in user to query
         create: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'guest', // Admins and guests can create
         delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete users
-        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager' || session?.data.role === 'guest', // Admins, managers, and guests can update
       },
       filter: {
         query: ({ session }) => {
@@ -30,13 +30,14 @@ export const lists = {
             return {}; // Admins can update all users
           } else if (session?.data.role === 'manager') {
             return { business: { id: { equals: session.data.businessId } } }; // Managers can only update their assigned business and related entities
+          } else if (session?.data.role === 'guest') {
+            return {}; // Guests can update
           } else {
-            return false; // Guests and public cannot update
+            return false; // Public cannot update
           }
         },
       },
     },
-    
     fields: {
       name: text({ validation: { isRequired: true } }),
       email: text({
