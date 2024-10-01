@@ -8,24 +8,32 @@ export const lists = {
   User: list({
     access: {
       operation: {
-        // Allow any logged-in user to query their own account (admin or manager)
         query: ({ session }) => !!session || true, // Allow any logged-in user to query
-        create: ({ session }) => session?.data.role === 'admin', // Only admins can create users
+        create: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'guest', // Admins and guests can create
         delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete users
-        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Both admins and managers can update
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
       },
       filter: {
-        // Admins can query all users, but managers can only query their own user record
-        query: ({ session }) =>
-          session?.data.role === 'admin'
-            ? {} // Admins can query all users
-            : { id: { equals: session.itemId } }, // Managers can only query their own user data
-
-        // Admins can update any user, managers can only update their own user data
-        update: ({ session }) =>
-          session?.data.role === 'admin'
-            ? {} // Admins can update all users
-            : { id: { equals: session.itemId } }, // Managers can only update their own user data
+        query: ({ session }) => {
+          if (session?.data.role === 'admin') {
+            return {}; // Admins can query all users
+          } else if (session?.data.role === 'manager') {
+            return { business: { id: { equals: session.data.businessId } } }; // Managers can only query their assigned business and related entities
+          } else if (session?.data.role === 'guest') {
+            return {}; // Guests can query
+          } else {
+            return {}; // Public can query
+          }
+        },
+        update: ({ session }) => {
+          if (session?.data.role === 'admin') {
+            return {}; // Admins can update all users
+          } else if (session?.data.role === 'manager') {
+            return { business: { id: { equals: session.data.businessId } } }; // Managers can only update their assigned business and related entities
+          } else {
+            return false; // Guests and public cannot update
+          }
+        },
       },
     },
     fields: {
