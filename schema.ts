@@ -18,13 +18,13 @@ export const lists = {
           console.log('Query filter: session', session); // Debugging
           return session?.data.role === 'admin'
             ? {} // Admins can query all users
-            : { id: { equals: session.itemId } }; // Managers and guests can only query their own user data
+            : { id: { equals: session.user.id } }; // Managers and guests can only query their own user data
         },
         update: ({ session }) => {
           console.log('Update filter: session', session); // Debugging
           return session?.data.role === 'admin'
             ? {} // Admins can update all users
-            : { id: { equals: session.itemId } }; // Managers and guests can only update their own user data
+            : { id: { equals: session.user.id } }; // Managers and guests can only update their own user data
         },
       },
     },
