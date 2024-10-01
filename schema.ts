@@ -8,24 +8,26 @@ export const lists = {
   User: list({
     access: {
       operation: {
-        query: allowAll, // Allow any logged-in user to query
-        create: allowAll, // Only admins can create users
+        query: ({ session }) => !!session || true, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create users
         delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete users
-        update: allowAll, // Admins, managers, and guests can update
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager' || session?.data.role === 'guest', // Admins, managers, and guests can update
       },
       filter: {
-        query: ({ session }) =>
-          session?.data.role === 'admin'
+        query: ({ session }) => {
+          console.log('Query filter: session', session); // Debugging
+          return session?.data.role === 'admin'
             ? {} // Admins can query all users
-            : { id: { equals: session.itemId } }, // Managers and guests can only query their own user data
-
-        update: ({ session }) =>
-          session?.data.role === 'admin'
+            : { id: { equals: session.itemId } }; // Managers and guests can only query their own user data
+        },
+        update: ({ session }) => {
+          console.log('Update filter: session', session); // Debugging
+          return session?.data.role === 'admin'
             ? {} // Admins can update all users
-            : { id: { equals: session.itemId } }, // Managers and guests can only update their own user data
+            : { id: { equals: session.itemId } }; // Managers and guests can only update their own user data
+        },
       },
     },
-
     fields: {
       name: text({ validation: { isRequired: true } }),
       email: text({
