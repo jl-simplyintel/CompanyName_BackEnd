@@ -34,7 +34,7 @@ export default withAuth(
     lists,
     session,
     ui: {
-      isAccessAllowed: ({ session }) => !!session && session.data.role === 'admin',
+      isAccessAllowed: ({ session }) => !!session && session.data.role === 'admin' || session.data.role === 'manager',
     },
     graphql: {
       apolloConfig: {

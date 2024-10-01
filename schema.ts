@@ -6,7 +6,28 @@ import { document } from '@keystone-6/fields-document';
 export const lists = {
   // User List
   User: list({
-    access: allowAll, // Allow access to all operations without restriction
+    access: {
+      operation: {
+        // Allow any logged-in user to query their own account (admin or manager)
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create users
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete users
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Both admins and managers can update
+      },
+      filter: {
+        // Admins can query all users, but managers can only query their own user record
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all users
+            : { id: { equals: session.itemId } }, // Managers can only query their own user data
+
+        // Admins can update any user, managers can only update their own user data
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all users
+            : { id: { equals: session.itemId } }, // Managers can only update their own user data
+      },
+    },
     fields: {
       name: text({ validation: { isRequired: true } }),
       email: text({
@@ -57,11 +78,26 @@ export const lists = {
       },
     },
   }),
-  
 
-  // Business List
   Business: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all businesses
+            : { manager: { id: { equals: session.itemId } } }, // Managers can only query businesses they manage
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all businesses
+            : { manager: { id: { equals: session.itemId } } }, // Managers can only update businesses they manage
+      },
+    },
     fields: {
       name: text({ validation: { isRequired: true } }),
       description: document({
@@ -103,7 +139,6 @@ export const lists = {
         defaultValue: { kind: 'now' },
         ui: { createView: { fieldMode: 'hidden' }, itemView: { fieldMode: 'read' } },
       }),
-      // Relationship: A business can be managed by multiple managers
       manager: relationship({
         ref: 'User.businesses',
         ui: {
@@ -111,24 +146,41 @@ export const lists = {
           cardFields: ['name', 'email'],
           inlineCreate: { fields: ['name', 'email'] },
           inlineEdit: { fields: ['name', 'email'] },
-          inlineConnect: true,  // Enable connecting to existing users
+          inlineConnect: true,
         },
       }),
-
     },
     db: {
       idField: { kind: 'uuid' },
     },
     ui: {
+      hideCreate: ({ session }) => session?.data.role === 'manager',
       listView: {
-        initialColumns: ['name', 'industry', 'contactEmail', 'location', 'yearFounded'],
-        initialSort: { field: 'name', direction: 'ASC' },
+        initialColumns: ['name', 'contactEmail', 'location', 'manager'],
       },
     },
   }),
 
   Product: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all products
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only query products from businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all products
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only update products from businesses they manage
+      },
+    },
     fields: {
       name: text({ validation: { isRequired: true } }),
       description: document({
@@ -169,7 +221,25 @@ export const lists = {
   }),
 
   Image: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all images
+            : { product: { business: { manager: { id: { equals: session.itemId } } } } }, // Managers can only query images related to products of businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all images
+            : { product: { business: { manager: { id: { equals: session.itemId } } } } }, // Managers can only update images related to products of businesses they manage
+      },
+    },
     fields: {
       file: image({ storage: 'local_images' }),
       product: relationship({ ref: 'Product.images' }), // Link back to Product
@@ -177,7 +247,25 @@ export const lists = {
   }),
 
   ProductReview: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all reviews
+            : { product: { business: { manager: { id: { equals: session.itemId } } } } }, // Managers can only query reviews for products of businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all reviews
+            : { product: { business: { manager: { id: { equals: session.itemId } } } } }, // Managers can only update reviews for products of businesses they manage
+      },
+    },
     fields: {
       user: relationship({ ref: 'User.productReviews' }), // Correct relationship to User
       product: relationship({ ref: 'Product.reviews' }), // Link to Product
@@ -215,7 +303,25 @@ export const lists = {
   }),
 
   ProductComplaint: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all complaints
+            : { product: { business: { manager: { id: { equals: session.itemId } } } } }, // Managers can only query complaints for products of businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all complaints
+            : { product: { business: { manager: { id: { equals: session.itemId } } } } }, // Managers can only update complaints for products of businesses they manage
+      },
+    },
     fields: {
       user: relationship({ ref: 'User.productComplaints' }), // Link to User
       product: relationship({ ref: 'Product.complaints' }), // Link to Product
@@ -244,7 +350,25 @@ export const lists = {
 
   // Complaint List
   Complaint: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all complaints
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only query complaints for businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all complaints
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only update complaints for businesses they manage
+      },
+    },
     fields: {
       user: relationship({ ref: 'User.complaints', ui: { itemView: { fieldMode: 'read' } } }),
 
@@ -297,7 +421,25 @@ export const lists = {
 
   // Review List
   Review: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all reviews
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only query reviews for businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all reviews
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only update reviews for businesses they manage
+      },
+    },
     fields: {
       user: relationship({ ref: 'User.reviews', ui: { itemView: { fieldMode: 'read' } } }),
 
@@ -358,7 +500,25 @@ export const lists = {
 
   // Quote List
   Quote: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all quotes
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only query quotes for businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all quotes
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only update quotes for businesses they manage
+      },
+    },
     fields: {
       user: relationship({ ref: 'User.quotes', ui: { itemView: { fieldMode: 'read' } } }),
 
@@ -402,7 +562,25 @@ export const lists = {
 
   // ComplaintReply List
   ComplaintReply: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all complaint replies
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only query complaint replies for businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all complaint replies
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only update complaint replies for businesses they manage
+      },
+    },
     fields: {
       content: text({ validation: { isRequired: true }, ui: { displayMode: 'textarea' } }),
       complaint: relationship({
@@ -447,7 +625,25 @@ export const lists = {
 
   // ReviewReply List
   ReviewReply: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all review replies
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only query review replies for businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all review replies
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only update review replies for businesses they manage
+      },
+    },
     fields: {
       content: text({ validation: { isRequired: true }, ui: { displayMode: 'textarea' } }),
       review: relationship({
@@ -492,7 +688,25 @@ export const lists = {
 
   // QuoteReply List
   QuoteReply: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all quote replies
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only query quote replies for businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all quote replies
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only update quote replies for businesses they manage
+      },
+    },
     fields: {
       content: text({ validation: { isRequired: true }, ui: { displayMode: 'textarea' } }),
       quote: relationship({
@@ -536,7 +750,25 @@ export const lists = {
   }),
 
   JobListing: list({
-    access: allowAll,
+    access: {
+      operation: {
+        query: ({ session }) => !!session, // Allow any logged-in user to query
+        create: ({ session }) => session?.data.role === 'admin', // Only admins can create
+        update: ({ session }) => session?.data.role === 'admin' || session?.data.role === 'manager', // Admins and managers can update
+        delete: ({ session }) => session?.data.role === 'admin', // Only admins can delete
+      },
+      filter: {
+        query: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can query all job listings
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only query job listings for businesses they manage
+
+        update: ({ session }) =>
+          session?.data.role === 'admin'
+            ? {} // Admins can update all job listings
+            : { business: { manager: { id: { equals: session.itemId } } } }, // Managers can only update job listings for businesses they manage
+      },
+    },
     fields: {
       business: relationship({ ref: 'Business.jobListings', many: false }),
       title: text({ validation: { isRequired: true } }),
