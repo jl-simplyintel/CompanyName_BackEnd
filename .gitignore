@@ -2,3 +2,4 @@ node_modules
 .keystone/
 *.log
 .env
+schema_copy.ts
