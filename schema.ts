@@ -18,7 +18,7 @@ export const lists = {
           if (session?.data.role === 'admin') {
             return {}; // Admins can query all users
           } else if (session?.data.role === 'manager') {
-            return { business: { id: { equals: session.data.businessId } } }; // Managers can only query their assigned business and related entities
+            return { users: { id: { equals: session.data.businessId } } }; // Managers can only query their assigned business and related entities
           } else if (session?.data.role === 'guest') {
             return {}; // Guests can query
           } else {
@@ -29,7 +29,7 @@ export const lists = {
           if (session?.data.role === 'admin') {
             return {}; // Admins can update all users
           } else if (session?.data.role === 'manager') {
-            return { business: { id: { equals: session.data.businessId } } }; // Managers can only update their assigned business and related entities
+            return { users: { id: { equals: session.data.businessId } } }; // Managers can only update their assigned business and related entities
           } else if (session?.data.role === 'guest') {
             return {}; // Guests can update
           } else {
