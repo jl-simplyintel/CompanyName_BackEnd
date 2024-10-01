@@ -8,8 +8,8 @@ export default withAuth(
     server: {
       cors: {
         origin: [
-          'https://companynameadmin-008a72cce60a.herokuapp.com', 
-          'https://company-name-cyan.vercel.app', 
+          'https://companynameadmin-008a72cce60a.herokuapp.com',
+          'https://company-name-cyan.vercel.app',
           'https://company-name-git-main-sepis-projects.vercel.app'
         ],
         credentials: true,
@@ -19,8 +19,8 @@ export default withAuth(
         // Use the CORS middleware with your configuration
         app.use(cors({
           origin: [
-            'https://companynameadmin-008a72cce60a.herokuapp.com', 
-            'https://company-name-cyan.vercel.app', 
+            'https://companynameadmin-008a72cce60a.herokuapp.com',
+            'https://company-name-cyan.vercel.app',
             'https://company-name-git-main-sepis-projects.vercel.app'
           ],
           credentials: true,
@@ -35,10 +35,10 @@ export default withAuth(
     session,
     ui: {
       isAccessAllowed: ({ session }) => {
-        // Check if session exists and user is an admin or manager
-        return !!session && (session.data.role === 'admin' || session.data.role === 'manager');
+        // Check if session exists and user is an admin
+        return !!session && session.data.role === 'admin';
       },
-    },         
+    },
     graphql: {
       apolloConfig: {
         introspection: true,
