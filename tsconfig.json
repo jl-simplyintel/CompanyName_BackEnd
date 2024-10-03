@@ -9,12 +9,14 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "typeRoots": ["./node_modules/@types", "./routes"]
   },
   "include": [
     "./**/*.ts",
-    "./**/*.tsx"
-  ], // Make sure to include .tsx files
+    "./**/*.tsx",
+    "routes/**/*.d.ts"  // Add this line to include .d.ts files
+, "routes/upload.d.ts", "routes/upload.js"  ], // Make sure to include .tsx files
   "exclude": [
     "node_modules"
   ]

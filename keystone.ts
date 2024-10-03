@@ -2,6 +2,7 @@ import { config } from '@keystone-6/core';
 import { lists } from './schema';
 import { withAuth, session } from './auth';
 import cors from 'cors';
+import uploadHandler from './routes/upload'; // Ensure this path is correct
 
 export default withAuth(
   config({
@@ -10,7 +11,8 @@ export default withAuth(
         origin: [
           'https://companynameadmin-008a72cce60a.herokuapp.com',
           'https://company-name-cyan.vercel.app',
-          'https://company-name-git-main-sepis-projects.vercel.app'
+          'https://company-name-git-main-sepis-projects.vercel.app',
+          'http://localhost:3000'
         ],
         credentials: true,
       },
@@ -21,10 +23,14 @@ export default withAuth(
           origin: [
             'https://companynameadmin-008a72cce60a.herokuapp.com',
             'https://company-name-cyan.vercel.app',
-            'https://company-name-git-main-sepis-projects.vercel.app'
+            'https://company-name-git-main-sepis-projects.vercel.app',
+            'http://localhost:3000'
           ],
           credentials: true,
         }));
+
+        // Register the upload route
+        app.post('/api/upload', uploadHandler); // This line adds the upload route
       }
     },
     db: {

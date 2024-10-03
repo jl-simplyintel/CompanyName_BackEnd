@@ -1,7 +1,6 @@
 import { list } from '@keystone-6/core';
 import { text, relationship, password, timestamp, select, integer, virtual, image, checkbox } from '@keystone-6/core/fields';
 import { allowAll } from '@keystone-6/core/access';
-import { document } from '@keystone-6/fields-document';
 
 export const lists = {
   // User List
@@ -62,10 +61,10 @@ export const lists = {
     access: allowAll,
     fields: {
       name: text({ validation: { isRequired: true } }),
-      description: document({
-        formatting: true,
-        links: true,
-        layouts: [[1, 1], [1, 1, 1]],
+      description: text({
+        ui: {
+          displayMode: 'textarea', // Makes it a textarea in the admin UI
+        },
       }),
       industry: text(),
       contactEmail: text({ validation: { isRequired: true } }),
@@ -127,13 +126,10 @@ export const lists = {
     access: allowAll,
     fields: {
       name: text({ validation: { isRequired: true } }),
-      description: document({
-        formatting: true, // Enables bold, italic, underline, etc.
-        links: true,      // Enables hyperlink functionality
-        layouts: [
-          [1, 1],         // Supports multiple column layouts
-          [1, 1, 1],
-        ],
+      description: text({
+        ui: {
+          displayMode: 'textarea', // Makes it a textarea in the admin UI
+        },
       }),
       images: relationship({
         ref: 'Image.product',
